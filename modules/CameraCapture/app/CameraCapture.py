@@ -16,6 +16,8 @@ import numpy
 import requests
 import json
 import time
+#add redis
+import redis
 
 import VideoStream
 from VideoStream import VideoStream
@@ -123,6 +125,10 @@ class CameraCapture(object):
     def start(self):
         frameCounter = 0
         perfForOneFrameInMs = None
+
+        # Initialize Redis DB connection
+        r = redis.Redis(host='redisedge', port=6379)
+
         while True:
             if self.showVideo or self.verbose:
                 startOverall = time.time()
@@ -186,6 +192,19 @@ class CameraCapture(object):
                     startProcessingExternally = time.time()
 
                 #Send over HTTP for processing
+
+                # add Redis Stream tags
+                xaddstream = 'XADD frameStream * frame '
+                writeString = xaddstream + encodedFrame
+                #debug
+                print("writeString for stream entry is: %s\n" % writeString)
+                redistimestamp = r.execute_command(writeString)
+                #debug (read stream back)
+                readstream = 'XRANGE frameStream - +'
+                streamvalue = r.execute_command(readstream)
+                print('\nRedis stream is : ')
+                print(streamvalue)
+
                 response = self.__sendFrameForProcessing(encodedFrame)
                 if self.verbose:
                     print("Time to process frame externally: " + self.__displayTimeDifferenceInMs(time.time(), startProcessingExternally))
