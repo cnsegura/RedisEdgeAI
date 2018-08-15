@@ -195,17 +195,27 @@ class CameraCapture(object):
 
                 # add Redis Stream tags
                 xaddstream = 'XADD frameStream * frame '
-                writeString = xaddstream + encodedFrame
+                writeString = xaddstream + str(frameCounter)
                 #debug
-                print("writeString for stream entry is: %s\n" % writeString)
+                #print("writeString for stream entry is: %s\n" % writeString)
                 redistimestamp = r.execute_command(writeString)
                 #debug (read stream back)
                 readstream = 'XRANGE frameStream - +'
                 streamvalue = r.execute_command(readstream)
-                print('\nRedis stream is : ')
+                print('\n******\nRedis stream is : ')
                 print(streamvalue)
 
                 response = self.__sendFrameForProcessing(encodedFrame)
+                
+                # from response create Redis Hash Table
+                responsedict =  json.loads(response)[0]
+                r.hmset(str(redistimestamp),responsedict)
+                #deug
+                readhash = r.hgetall(str(redistimestamp))
+                print('\nRedis Hash Table %s is:' % str(redistimestamp))
+                print('%s' % readhash)
+                print('\n******')
+
                 if self.verbose:
                     print("Time to process frame externally: " + self.__displayTimeDifferenceInMs(time.time(), startProcessingExternally))
                     startSendingToEdgeHub = time.time()
