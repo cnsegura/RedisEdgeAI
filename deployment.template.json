@@ -1,5 +1,5 @@
 {
-  "moduleContent": {
+  "modulesContent": {
     "$edgeAgent": {
       "properties.desired": {
         "schemaVersion": "1.0",
@@ -55,6 +55,26 @@
               "image": "${MODULES.ImageClassifierService.amd64}",
               "createOptions": ""
             }
+          },
+          "RedisConsumer": {
+            "version": "0.0.1",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.RedisConsumer.amd64}",
+              "createOptions": ""
+            }
+          },
+          "redisedge": {
+            "version": "0.8",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "$CONTAINER_REGISTRY_ADDRESS/redisedge:0.8-amd64",
+              "createOptions": ""
+            }
           }
         }
       }
@@ -63,7 +83,8 @@
       "properties.desired": {
         "schemaVersion": "1.0",
         "routes": {
-          "CameraCaptureToIoTHub": "FROM /messages/modules/camera-capture/outputs/output1 INTO $upstream"
+          "CameraCaptureToIoTHub": "FROM /messages/modules/camera-capture/outputs/output1 INTO $upstream",
+          "RedisConsumerToIoTHub": "FROM /messages/modules/RedisConsumer/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200

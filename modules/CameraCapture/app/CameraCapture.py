@@ -194,7 +194,7 @@ class CameraCapture(object):
                 #Send over HTTP for processing
 
                 # add Redis Stream tags
-                xaddstream = 'XADD frameStream * frame '
+                xaddstream = 'XADD frameStream MAXLEN ~ 1000 * frame '
                 writeString = xaddstream + str(frameCounter)
                 #debug
                 #print("writeString for stream entry is: %s\n" % writeString)
