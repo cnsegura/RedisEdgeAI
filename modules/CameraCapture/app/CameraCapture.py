@@ -194,27 +194,44 @@ class CameraCapture(object):
                 #Send over HTTP for processing
 
                 # add Redis Stream tags
-                xaddstream = 'XADD frameStream MAXLEN ~ 1000 * frame '
-                writeString = xaddstream + str(frameCounter)
+                #xaddstream = 'XADD frameStream MAXLEN ~ 1000 * frame '
+                #writeString = xaddstream + str(frameCounter)
+                
                 #debug
                 #print("writeString for stream entry is: %s\n" % writeString)
-                redistimestamp = r.execute_command(writeString)
+                #redistimestamp = r.execute_command(writeString)
                 #debug (read stream back)
-                readstream = 'XRANGE frameStream - +'
-                streamvalue = r.execute_command(readstream)
-                print('\n******\nRedis stream is : ')
-                print(streamvalue)
+                #readstream = 'XRANGE frameStream - +'
+                #streamvalue = r.execute_command(readstream)
+                #print('\n******\nRedis stream is : ')
+                #print(streamvalue)
 
                 response = self.__sendFrameForProcessing(encodedFrame)
                 
                 # from response create Redis Hash Table
                 responsedict =  json.loads(response)[0]
-                r.hmset(str(redistimestamp),responsedict)
+                tagString = responsedict['Tag']
+                probabilityString = responsedict['Probability']
+                
+                #testing
+                xaddstream = 'XADD frameStream MAXLEN ~ 1000 * '
+                writeString = xaddstream + 'Tag ' + str(tagString) + ' Probability ' + str(probabilityString)
+            
+                #debug
+                print('\n******\nwriteString is %s\n' % writeString)
+                r.execute_command(writeString)
+                readstream = 'XRANGE frameStream - +'
+                streamvalue = r.execute_command(readstream)
+                print('\n******\nRedis stream is : ')
+                print(streamvalue)
+
+
+                #r.hmset(str(redistimestamp),responsedict)
                 #deug
-                readhash = r.hgetall(str(redistimestamp))
-                print('\nRedis Hash Table %s is:' % str(redistimestamp))
-                print('%s' % readhash)
-                print('\n******')
+                #readhash = r.hgetall(str(redistimestamp))
+                #print('\nRedis Hash Table %s is:' % str(redistimestamp))
+                #print('%s' % readhash)
+                #print('\n******')
 
                 if self.verbose:
                     print("Time to process frame externally: " + self.__displayTimeDifferenceInMs(time.time(), startProcessingExternally))
