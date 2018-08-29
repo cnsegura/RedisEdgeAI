@@ -6,6 +6,7 @@ import random
 import time
 import sys
 import redis
+import json
 import iothub_client
 # pylint: disable=E0611
 from iothub_client import IoTHubModuleClient, IoTHubClientError, IoTHubTransportProvider
@@ -24,6 +25,17 @@ def index():
     print('\n******\nRedis streamlen is : ')
     print(streamlen)
     aiconf = {'confidence': streamlen}
+
+    xrangestring = 'XRANGE frameStream - + COUNT 2'
+    streamvalue = r.execute_command(xrangestring)
+    
+    print('\n******\nRedis responsedict is : ')
+    print(streamvalue)
+    print('\n******\nRedis responsedict[0][1][2] is : ')
+    print(streamvalue[0][1][2])
+    print('\n******\nRedis responsedict[1][0] is : ')
+    print(streamvalue[1][0])
+
     return render_template('index.html', aiconf=aiconf)
 
 # messageTimeout - the maximum time in milliseconds until a message times out.
