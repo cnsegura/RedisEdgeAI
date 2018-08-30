@@ -26,18 +26,29 @@ def index():
 
     aiconf = {'confidence': streamlen}
 
-    xrangestring = 'XRANGE appleStream - + COUNT 2'
+    endtsfloat = time.time() *1000
+    endts = int(float(endtsfloat))
+    print('\n****\nendts string is: ')
+    print(endts)
+    endtsstr = str(endts)
+    starttsstr = str((endts - 30000))
+    #look up last 30 seconds of data
+    xrangestring = 'XRANGE appleStream ' + starttsstr + ' ' + endtsstr
+    print('\n****\nRange string is: ')
+    print(xrangestring)
     streamvalue = r.execute_command(xrangestring)
     
     #create x/y
     xAxis = [item[0][:-2] for item in streamvalue]
     #debug
-    #print('\n******\nxAxis is : ')
-    #print(xAxis)
-    yAxis = [item[1][3] for item in streamvalue]
+    print('\n******\nxAxis is : ')
+    print(xAxis)
+    yAxisStr = [item[1][3] for item in streamvalue]
+    #hack
+    yAxis = [float(x) for x in yAxisStr]
     #debug
-    #print('\n******\nyAxis is : ')
-    #print(yAxis)
+    print('\n******\nyAxis is : ')
+    print(yAxis)
     #print('\n******\nRedis streamvalue is : ')
     #print(streamvalue)
 
@@ -46,8 +57,6 @@ def index():
 
     bar_chart =  pygal.Bar(width = 750, size = 300, explicit_size = True)
     bar_chart.x_labels = xAxis
-    #bar_chart.x_labels = 'Red', 'Blue'
-    #bar_chart.add('line', [.0002, .0005,.00035])
     bar_chart.add('Apple Probability', yAxis)
 
     return render_template('index.html', aiconf=aiconf, title=title, bar_chart=bar_chart)

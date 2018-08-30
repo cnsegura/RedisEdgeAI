@@ -3,9 +3,15 @@
         <title>{{ title }}</title>
     </head>
     <body>
-        <h1> this is my variable text {{ aiconf.confidence }}</h1>
+        <h1> Contoso A/B Sorting International </h1>
         <div align = "Center">
             {{ bar_chart.render(is_unicode=True)|safe }}
         </div>
+        <table style="width:100%">
+			<tr><th>Type</th><th>Count</th></tr>
+			<tr><td align="center">Apples!</td><td align="center"> {{ aiconf.confidence }} </td></tr>
+			<tr><td align="center">Apples?</td><td align="center"> {{ aiconf.confidence }} </td></tr>
+			<tr><td align="center">!Apples</td><td align="center"> {{ aiconf.confidence }} </td></tr>
+		</table>
     </body>
 </html>

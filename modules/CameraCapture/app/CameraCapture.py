@@ -216,8 +216,6 @@ class CameraCapture(object):
                 else:
                     stream = 'bananaStream'
                 probabilityString = responsedict['Probability']
-                
-                #testing
                 xaddstream = 'XADD ' + stream + ' MAXLEN ~ 1000 * '
                 writeString = xaddstream + 'Tag ' + str(tagString) + ' Probability ' + str(probabilityString)
                 #debug
