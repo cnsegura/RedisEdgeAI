@@ -43,9 +43,11 @@ def index():
 
     #build chart
     title = 'Apple Probability'
-    
-    
+
+    bar_chart =  pygal.Bar(width = 750, size = 300, explicit_size = True)
     bar_chart.x_labels = xAxis
+    #bar_chart.x_labels = 'Red', 'Blue'
+    #bar_chart.add('line', [.0002, .0005,.00035])
     bar_chart.add('Apple Probability', yAxis)
 
     return render_template('index.html', aiconf=aiconf, title=title, bar_chart=bar_chart)
@@ -113,7 +115,7 @@ class HubManager(object):
 def main(protocol):
     try:
         hub_manager = HubManager(protocol)
-
+        
         print ( "Starting the webserver at localhost ")
         # Run the server
         app.run(host='0.0.0.0', port=8080)

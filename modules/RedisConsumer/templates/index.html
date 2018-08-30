@@ -1,15 +1,11 @@
 <html>
     <head>
         <title>{{ title }}</title>
-        <script type="text/javascript"
-            src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js">
-        </script>
-        <script type="text/javascript" 
-            src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js">
-        </script>
     </head>
     <body>
         <h1> this is my variable text {{ aiconf.confidence }}</h1>
-        {{ bar_chart.render()|safe }}
+        <div align = "Center">
+            {{ bar_chart.render(is_unicode=True)|safe }}
+        </div>
     </body>
 </html>
