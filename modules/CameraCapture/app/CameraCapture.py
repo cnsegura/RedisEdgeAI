@@ -208,22 +208,28 @@ class CameraCapture(object):
 
                 response = self.__sendFrameForProcessing(encodedFrame)
                 
-                # from response create Redis Hash Table
+                # from response create Redis Stream
                 responsedict =  json.loads(response)[0]
                 tagString = responsedict['Tag']
+                if tagString == 'Apple':
+                    stream = 'appleStream'
+                else:
+                    stream = 'bananaStream'
                 probabilityString = responsedict['Probability']
                 
                 #testing
-                xaddstream = 'XADD frameStream MAXLEN ~ 1000 * '
+                xaddstream = 'XADD ' + stream + ' MAXLEN ~ 1000 * '
                 writeString = xaddstream + 'Tag ' + str(tagString) + ' Probability ' + str(probabilityString)
-            
                 #debug
-                print('\n******\nwriteString is %s\n' % writeString)
+                #print('\n******\nwriteString is %s\n' % writeString)
+                
                 r.execute_command(writeString)
-                readstream = 'XRANGE frameStream - +'
-                streamvalue = r.execute_command(readstream)
-                print('\n******\nRedis stream is : ')
-                print(streamvalue)
+                
+                #debug
+                #readstream = 'XRANGE ' + stream + ' - +'
+                #streamvalue = r.execute_command(readstream)
+                #print('\n******\nRedis %s is : ' % stream)
+                #print(streamvalue)
 
 
                 #r.hmset(str(redistimestamp),responsedict)

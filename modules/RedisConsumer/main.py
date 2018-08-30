@@ -7,6 +7,7 @@ import time
 import sys
 import redis
 import json
+import pygal
 import iothub_client
 # pylint: disable=E0611
 from iothub_client import IoTHubModuleClient, IoTHubClientError, IoTHubTransportProvider
@@ -20,23 +21,34 @@ def index():
 
     # Initialize Redis DB connection
     r = redis.Redis(host='redisedge', port=6379)
-    xlenstream = 'XLEN frameStream '
+    xlenstream = 'XLEN appleStream '
     streamlen = r.execute_command(xlenstream)
-    print('\n******\nRedis streamlen is : ')
-    print(streamlen)
+
     aiconf = {'confidence': streamlen}
 
-    xrangestring = 'XRANGE frameStream - + COUNT 2'
+    xrangestring = 'XRANGE appleStream - + COUNT 2'
     streamvalue = r.execute_command(xrangestring)
     
-    print('\n******\nRedis responsedict is : ')
-    print(streamvalue)
-    print('\n******\nRedis responsedict[0][1][2] is : ')
-    print(streamvalue[0][1][2])
-    print('\n******\nRedis responsedict[1][0] is : ')
-    print(streamvalue[1][0])
+    #create x/y
+    xAxis = [item[0][:-2] for item in streamvalue]
+    #debug
+    #print('\n******\nxAxis is : ')
+    #print(xAxis)
+    yAxis = [item[1][3] for item in streamvalue]
+    #debug
+    #print('\n******\nyAxis is : ')
+    #print(yAxis)
+    #print('\n******\nRedis streamvalue is : ')
+    #print(streamvalue)
 
-    return render_template('index.html', aiconf=aiconf)
+    #build chart
+    title = 'Apple Probability'
+    
+    
+    bar_chart.x_labels = xAxis
+    bar_chart.add('Apple Probability', yAxis)
+
+    return render_template('index.html', aiconf=aiconf, title=title, bar_chart=bar_chart)
 
 # messageTimeout - the maximum time in milliseconds until a message times out.
 # The timeout period starts at IoTHubModuleClient.send_event_async.
