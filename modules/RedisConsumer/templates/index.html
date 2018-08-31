@@ -4,13 +4,13 @@
     </head>
     <body>
         <h1 style="text-align: center;"> Contoso A/B Sorting International </h1>
-        <div style="position:relative; ">
+        <div style="position:relative; float: left; width: 500px; ">
             {{ applebar_chart.render(is_unicode=True)|safe }}
         </div>
-		<div style="position: right;">
+		<div style="position: relative; float: left; width: 500px;">
             {{ bananabar_chart.render(is_unicode=True)|safe }}
         </div>
-        <table style=" width:100%; position: relative;">
+        <table style=" width: 75%; position: relative;">
             <tr bgcolor=#d3d3d3><td align="center", style="font-size: 150%;" colspan="2">Apples</td></tr>
             <tr><th><h3>Type</h3></th><th><h3>Count</h3></th></tr>
             <tr><td align="center", style="font-size: 150%;">Apple! <i style="font-size: 75%;">(p &gt; 80%)</i></td><td align="center", style="font-size: 150%;"> {{ isAppleCount.isApple }} </td></tr>
