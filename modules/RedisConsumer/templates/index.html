@@ -3,15 +3,23 @@
         <title></title>
     </head>
     <body>
-        <h1 style="position:relative; left: 50%;"> Contoso A/B Sorting International </h1>
-        <div style="position:relative; left: 50%;">
-            {{ bar_chart.render(is_unicode=True)|safe }}
+        <h1 style="text-align: center;"> Contoso A/B Sorting International </h1>
+        <div style="position:relative; ">
+            {{ applebar_chart.render(is_unicode=True)|safe }}
         </div>
-        <table style="width:100%">
-			<tr><th>Type</th><th>Count</th></tr>
-			<tr><td align="center", style="font-size: 150%;">Apple! (p &gt; 80%)</td><td align="center", style="font-size: 150%;"> {{ isAppleCount.isApple }} </td></tr>
-			<tr><td align="center", style="font-size: 150%;">Apple? (80% &gt; p &gt; 20%)</td><td align="center", style="font-size: 150%;"> {{ isMaybeAppleCount.isMaybeApple }} </td></tr>
-			<tr><td align="center", style="font-size: 150%;">!Apple (p &lt; 20%)</td><td align="center", style="font-size: 150%;"> {{isNotAppleCount.isNotApple }} </td></tr>
-		</table>
+		<div style="position: right;">
+            {{ bananabar_chart.render(is_unicode=True)|safe }}
+        </div>
+        <table style=" width:100%; position: relative;">
+            <tr bgcolor=#d3d3d3><td align="center", style="font-size: 150%;" colspan="2">Apples</td></tr>
+            <tr><th><h3>Type</h3></th><th><h3>Count</h3></th></tr>
+            <tr><td align="center", style="font-size: 150%;">Apple! <i style="font-size: 75%;">(p &gt; 80%)</i></td><td align="center", style="font-size: 150%;"> {{ isAppleCount.isApple }} </td></tr>
+            <tr><td align="center", style="font-size: 150%;">Apple? <i style="font-size: 75%;">(80% &gt; p &gt; 20%)</i></td><td align="center", style="font-size: 150%;"> {{ isMaybeAppleCount.isMaybeApple }} </td></tr>
+            <tr><td align="center", style="font-size: 150%;">!Apple <i style="font-size: 75%;">(p &lt; 20%)</i></td><td align="center", style="font-size: 150%;"> {{isNotAppleCount.isNotApple }} </td></tr>
+            <tr bgcolor=#d3d3d3><td align="center", style="font-size: 150%;" colspan="2">Bananas</td></tr>
+            <tr><td align="center", style="font-size: 150%;">Banana! <i style="font-size: 75%;">(p &gt; 80%)</i></td><td align="center", style="font-size: 150%;"> {{ isBananaCount.isBanana }} </td></tr>
+            <tr><td align="center", style="font-size: 150%;">Banana? <i style="font-size: 75%;">(80% &gt; p &gt; 20%)</i></td><td align="center", style="font-size: 150%;"> {{ isMaybeBananaCount.isMaybeBanana }} </td></tr>
+            <tr><td align="center", style="font-size: 150%;">!Banana <i style="font-size: 75%;">(p &lt; 20%)</i></td><td align="center", style="font-size: 150%;"> {{isNotBananaCount.isNotBanana }} </td></tr>
+        </table>
     </body>
 </html>

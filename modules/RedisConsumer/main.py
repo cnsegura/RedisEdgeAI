@@ -21,25 +21,25 @@ def index():
 
     # Initialize Redis DB connection
     r = redis.Redis(host='redisedge', port=6379)
-    xlenstream = 'XLEN appleStream '
-    streamlen = r.execute_command(xlenstream)
-
-    aiconf = {'confidence': streamlen}
 
     endtsfloat = time.time() *1000
-    endts = int(float(endtsfloat))
-   
+    endts = int(float(endtsfloat)) 
     endtsstr = str(endts)
     #print('\n****\nendts string is: ')
     #print(endtsstr)
     starttsstr = str((endts - 30000))
+    
+    ####
+    # get apple data
+    ####
+
     #look up last 30 seconds of data
     xrangestring = 'XRANGE appleStream ' + starttsstr + ' ' + endtsstr
-    #print('\n****\nRange string is: ')
-    #print(xrangestring)
+    print('\n****\nRange string is: ')
+    print(xrangestring)
     streamvalue = r.execute_command(xrangestring)
     
-    #create x/y
+    #create x/y for apple chart
     xAxis = [item[0][:-2] for item in streamvalue]
     #debug
     #print('\n******\nxAxis is : ')
@@ -51,22 +51,50 @@ def index():
     isAppleCount = {'isApple': isApple}
     isNotAppleCount = {'isNotApple': isNotApple}
     isMaybeAppleCount = {'isMaybeApple': isMaybeApple}
-    #hack
-    #yAxis = [float(x) for x in yAxisStr]
     #debug
     #print('\n******\nyAxis is : ')
     #print(yAxis)
     #print('\n******\nRedis streamvalue is : ')
     #print(streamvalue)
 
-    #build chart
-    
+    #build apple chart
+    applebar_chart =  pygal.Bar(title =u'Apples - last 30s', width = 500, size = 300, explicit_size = True)
+    applebar_chart.x_labels = xAxis
+    applebar_chart.add('Apples', yAxis)
 
-    bar_chart =  pygal.Bar(title =u'Apples - last 30s', width = 750, size = 300, explicit_size = True)
-    bar_chart.x_labels = xAxis
-    bar_chart.add('Apples', yAxis)
+    #####
+    #get banana data
+    #####
+    xrangestring = None
+    streamvalue[:] = []
+    #xAxis[:] =[]
+    #yAxis[:] = []
 
-    return render_template('index.html', isAppleCount=isAppleCount, isNotAppleCount=isNotAppleCount, isMaybeAppleCount=isMaybeAppleCount, bar_chart=bar_chart)
+    xrangestring = 'XRANGE bananaStream ' + starttsstr + ' ' + endtsstr
+    streamvalue = r.execute_command(xrangestring)
+    print('\n****\nRange string is: ')
+    print(xrangestring)
+    #create x/y for banana chart 
+    xAxisB = [item[0][:-2] for item in streamvalue]
+    yAxisB = [float(item[1][3]) for item in streamvalue]
+    isBanana = sum(i > 0.8 for i in yAxisB)
+    isNotBanana = sum(j < 0.2 for j in yAxisB)
+    isMaybeBanana = sum(k < 0.8 and k > 0.2 for k in yAxisB)
+    isBananaCount = {'isBanana': isBanana}
+    isNotBananaCount = {'isNotBanana': isNotBanana}
+    isMaybeBananaCount = {'isMaybeBanana': isMaybeBanana}
+
+    bananabar_chart =  pygal.Bar(title =u'Bananas - last 30s', width = 500, size = 300, explicit_size = True)
+    bananabar_chart.x_labels = xAxisB
+    bananabar_chart.add('Bananas', yAxisB)
+
+    #generate graphs
+    #context = {}
+    #context[u'applebar_chart'] = applebar_chart
+    #context[u'isApple'] = isApple
+    #context[u'bananabar_chart'] = bananabar_chart
+
+    return render_template('index.html', isAppleCount=isAppleCount, isNotAppleCount=isNotAppleCount, isMaybeAppleCount=isMaybeAppleCount, applebar_chart=applebar_chart, isBananaCount=isBananaCount, isNotBananaCount=isNotBananaCount, isMaybeBananaCount=isMaybeBananaCount, bananabar_chart=bananabar_chart)
 
 # messageTimeout - the maximum time in milliseconds until a message times out.
 # The timeout period starts at IoTHubModuleClient.send_event_async.
