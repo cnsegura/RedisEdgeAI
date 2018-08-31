@@ -28,38 +28,45 @@ def index():
 
     endtsfloat = time.time() *1000
     endts = int(float(endtsfloat))
-    print('\n****\nendts string is: ')
-    print(endts)
+   
     endtsstr = str(endts)
+    #print('\n****\nendts string is: ')
+    #print(endtsstr)
     starttsstr = str((endts - 30000))
     #look up last 30 seconds of data
     xrangestring = 'XRANGE appleStream ' + starttsstr + ' ' + endtsstr
-    print('\n****\nRange string is: ')
-    print(xrangestring)
+    #print('\n****\nRange string is: ')
+    #print(xrangestring)
     streamvalue = r.execute_command(xrangestring)
     
     #create x/y
     xAxis = [item[0][:-2] for item in streamvalue]
     #debug
-    print('\n******\nxAxis is : ')
-    print(xAxis)
-    yAxisStr = [item[1][3] for item in streamvalue]
+    #print('\n******\nxAxis is : ')
+    #print(xAxis)
+    yAxis = [float(item[1][3]) for item in streamvalue]
+    isApple = sum(i > 0.8 for i in yAxis)
+    isNotApple = sum(j < 0.2 for j in yAxis)
+    isMaybeApple = sum(k < 0.8 and k > 0.2 for k in yAxis)
+    isAppleCount = {'isApple': isApple}
+    isNotAppleCount = {'isNotApple': isNotApple}
+    isMaybeAppleCount = {'isMaybeApple': isMaybeApple}
     #hack
-    yAxis = [float(x) for x in yAxisStr]
+    #yAxis = [float(x) for x in yAxisStr]
     #debug
-    print('\n******\nyAxis is : ')
-    print(yAxis)
+    #print('\n******\nyAxis is : ')
+    #print(yAxis)
     #print('\n******\nRedis streamvalue is : ')
     #print(streamvalue)
 
     #build chart
-    title = 'Apple Probability'
+    
 
-    bar_chart =  pygal.Bar(width = 750, size = 300, explicit_size = True)
+    bar_chart =  pygal.Bar(title =u'Apples - last 30s', width = 750, size = 300, explicit_size = True)
     bar_chart.x_labels = xAxis
-    bar_chart.add('Apple Probability', yAxis)
+    bar_chart.add('Apples', yAxis)
 
-    return render_template('index.html', aiconf=aiconf, title=title, bar_chart=bar_chart)
+    return render_template('index.html', isAppleCount=isAppleCount, isNotAppleCount=isNotAppleCount, isMaybeAppleCount=isMaybeAppleCount, bar_chart=bar_chart)
 
 # messageTimeout - the maximum time in milliseconds until a message times out.
 # The timeout period starts at IoTHubModuleClient.send_event_async.

@@ -1,17 +1,17 @@
 <html>
     <head>
-        <title>{{ title }}</title>
+        <title></title>
     </head>
     <body>
-        <h1> Contoso A/B Sorting International </h1>
-        <div align = "Center">
+        <h1 style="position:relative; left: 50%;"> Contoso A/B Sorting International </h1>
+        <div style="position:relative; left: 50%;">
             {{ bar_chart.render(is_unicode=True)|safe }}
         </div>
         <table style="width:100%">
 			<tr><th>Type</th><th>Count</th></tr>
-			<tr><td align="center">Apples!</td><td align="center"> {{ aiconf.confidence }} </td></tr>
-			<tr><td align="center">Apples?</td><td align="center"> {{ aiconf.confidence }} </td></tr>
-			<tr><td align="center">!Apples</td><td align="center"> {{ aiconf.confidence }} </td></tr>
+			<tr><td align="center", style="font-size: 150%;">Apple! (p &gt; 80%)</td><td align="center", style="font-size: 150%;"> {{ isAppleCount.isApple }} </td></tr>
+			<tr><td align="center", style="font-size: 150%;">Apple? (80% &gt; p &gt; 20%)</td><td align="center", style="font-size: 150%;"> {{ isMaybeAppleCount.isMaybeApple }} </td></tr>
+			<tr><td align="center", style="font-size: 150%;">!Apple (p &lt; 20%)</td><td align="center", style="font-size: 150%;"> {{isNotAppleCount.isNotApple }} </td></tr>
 		</table>
     </body>
 </html>
